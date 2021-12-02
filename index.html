@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Nimi's Player</title>
+        <title>🎵 Nimi's Player</title>
     </head>
     <body id="body">
         <center>
-        <h1>Nimi's Player - Beta</h1>
+        <div id="topBar">
+            <h1>🎵 Nimi's Player - Beta</h1>
+            <button onclick="help()">how to?</button>
+        </div><br>
         <div style="width: 100%; overflow: hidden;">
             <div id="music1" style="float: left;"></div>
             <div id="music2" style="float: right;"></div><br>
@@ -16,7 +19,7 @@
                 <!--span>song 1: </span>
                 <input type="search" id="sb" placeholder="YT vid id" /><button onclick="loadVid(1)">load music</button><br-->
                 <h3>Volume</h3>
-                <input type="range" min="0" max="100" value="100" class="slider" id="slider1" onmousemove="setVol()">
+                0<input type="range" min="0" max="100" value="100" class="slider" id="slider1" onmousemove="setVol()">100<br><br>
                 <div id="drop1" class="dropZone" ondrop="drop(event, 1)" ondragover="allowDrop(event)">drop song here</div>
                 </center>
             </div>
@@ -25,7 +28,7 @@
                 <!--span>song 2: </span>
                 <input type="search" id="sb2" placeholder="YT vid id" /><button onclick="loadVid(2)">load music</button><br-->
                 <h3>Volume</h3>
-                <input type="range" min="0" max="100" value="100" class="slider" id="slider2" onmousemove="setVol()">
+                0<input type="range" min="0" max="100" value="100" class="slider" id="slider2" onmousemove="setVol()">100<br><br>
                 <div id="drop2" class="dropZone" ondrop="drop(event, 2)" ondragover="allowDrop(event)">drop song here</div>
                 </center>
             </div>
@@ -34,9 +37,9 @@
             <h3>Master Fade</h3>
             <input type="range" min="0" max="100" value="50" class="slider" id="slider3" onmousemove="setVol()">
             <h3>Queue</h3>
-            <input type="search" id="qInput" placeholder="Search Song" /><button onclick="addToQueueBtn()">add to queue</button><br><br>
+            <input type="search" id="qInput" placeholder="Search Song" /><button onclick="addToQueueBtn()">Add to queue</button><br><br>
             <div id="queue">
-
+                queue is empty at the moment :)
             </div>
         </div>
         </center>
@@ -127,8 +130,27 @@
             let nextInLineId = q.children[0].id;
             console.log(nextInLineId);
             loadVid(param, nextInLineId);
+
+            // add draggable song to the dropzone
+            let dropzone;
+            if (param == 1)
+            {
+                dropzone = document.getElementById('drop1');
+            }
+            else
+            {
+                dropzone = document.getElementById('drop2');
+            }
+            dropzone.innerHTML = '';
+            dropzone.appendChild(q.children[0]);
+
             // remove from q
             q.removeChild(q.children[0]);
+        }
+
+        function help()
+        {
+            alert("1. Add song to Queue\n2. Drag & Drop the song to one of the dropzones (light blue boxes)\n3. That's it have fun");
         }
 
         function drag(ev) {
@@ -211,6 +233,14 @@
 
     </script>
     <style>
+        /*
+        COLORS:
+            lightcoral
+            lightblue
+            rosybrown
+            cadetblue
+        */
+
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400&display=swap');
         body, button, input {
             font-family: 'Outfit', sans-serif;
@@ -218,6 +248,7 @@
 
         body {
             background-color: Beige;
+            margin: 0px;
         }
 
         .queuedSong {
@@ -281,6 +312,15 @@
             width: fit-content;
             border-style: none;
             border-radius: 20px;
+        }
+
+        #topBar {
+            background-color: cadetblue;
+            padding: 10px;
+        }
+
+        h3 {
+            font-;
         }
 
     </style>
