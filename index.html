@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body id="body">
+        <center>
+        <h1>Nimi's Player</h1>
+        <div style="width: 100%; overflow: hidden;">
+            <div id="music1" style="float: left;"></div>
+            <div id="music2" style="float: right;"></div><br>
+        </div>
+        <div style="width: 100%; overflow: hidden;">
+            <div id="sOption" style="float: left;">
+                <center>
+                <span>slot 1</span>
+                <input type="search" id="sb" /><button onclick="loadVid(1)">load music</button><br>
+                <input type="range" min="0" max="100" value="100" class="slider" id="slider1" onmousemove="setVol()">
+                </center>
+            </div>
+            <div id="sOption2" style="float: right;">
+                <center>
+                <span>slot 2</span>
+                <input type="search" id="sb2" /><button onclick="loadVid(2)">load music</button><br>
+                <input type="range" min="0" max="100" value="100" class="slider" id="slider2" onmousemove="setVol()">
+                </center>
+            </div>
+        </div>
+        <div id="sOptionMain">
+            <input type="range" min="0" max="100" value="50" class="slider" id="slider3" onmousemove="setVol()">
+        </div>
+        </center>
+    </body>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        var music1;
+        var music2;
+
+        window.onload = function() {
+            music1 = new YT.Player('music1', {
+                height: '390',
+                width: '640',
+                videoId: '83xBPCw5hh4',
+                playerVars: {
+                'playsinline': 1
+                },
+                events: {}
+            });
+
+            music2 = new YT.Player('music2', {
+                height: '390',
+                width: '640',
+                videoId: 'WILNIXZr2oc',
+                playerVars: {
+                'playsinline': 1
+                },
+                events: {}
+            });
+        }
+
+        function setVol()
+        {
+            let v1 = document.getElementById("slider1").value;
+            let v2 = document.getElementById("slider2").value;
+            let v3 = document.getElementById("slider3").value;
+            music1.setVolume(((100 - v3) / 100) * v1);
+            music2.setVolume((v3 / 100) * v2);
+        }
+        
+
+        function loadVid(param)
+        {
+            if (param == 1)
+            {
+                let val = document.getElementById('sb').value;
+
+                music1.loadVideoById(val);
+                music1.pauseVideo();
+            }
+            else
+            {
+                let val = document.getElementById('sb2').value;
+
+                music2.loadVideoById(val);
+                music2.pauseVideo();
+            }
+        }
+
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300&display=swap');
+        body, button, input {
+            font-family: 'Outfit', sans-serif;
+        }
+        
+    </style>
+</html>
