@@ -13,20 +13,23 @@
         <div style="width: 100%; overflow: hidden;">
             <div id="sOption" style="float: left;">
                 <center>
-                <span>slot 1</span>
-                <input type="search" id="sb" /><button onclick="loadVid(1)">load music</button><br>
+                <span>song 1: </span>
+                <input type="search" id="sb" placeholder="YT vid id" /><button onclick="loadVid(1)">load music</button><br>
+                <h3>Volume</h3>
                 <input type="range" min="0" max="100" value="100" class="slider" id="slider1" onmousemove="setVol()">
                 </center>
             </div>
             <div id="sOption2" style="float: right;">
                 <center>
-                <span>slot 2</span>
-                <input type="search" id="sb2" /><button onclick="loadVid(2)">load music</button><br>
+                <span>song 2: </span>
+                <input type="search" id="sb2" placeholder="YT vid id" /><button onclick="loadVid(2)">load music</button><br>
+                <h3>Volume</h3>
                 <input type="range" min="0" max="100" value="100" class="slider" id="slider2" onmousemove="setVol()">
                 </center>
             </div>
         </div>
         <div id="sOptionMain">
+            <h3>Master Fade</h3>
             <input type="range" min="0" max="100" value="50" class="slider" id="slider3" onmousemove="setVol()">
         </div>
         </center>
@@ -39,7 +42,7 @@
         window.onload = function() {
             music1 = new YT.Player('music1', {
                 height: '390',
-                width: '640',
+                width: window.innerWidth / 2 - 50,
                 videoId: '83xBPCw5hh4',
                 playerVars: {
                 'playsinline': 1
@@ -49,7 +52,7 @@
 
             music2 = new YT.Player('music2', {
                 height: '390',
-                width: '640',
+                width: window.innerWidth / 2 - 50,
                 videoId: 'WILNIXZr2oc',
                 playerVars: {
                 'playsinline': 1
@@ -88,10 +91,14 @@
 
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400&display=swap');
         body, button, input {
             font-family: 'Outfit', sans-serif;
         }
-        
+
+        body {
+            background-color: Beige;
+        }
+
     </style>
 </html>
