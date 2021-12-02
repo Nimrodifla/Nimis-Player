@@ -45,6 +45,7 @@
     <script>
         var music1;
         var music2;
+        var players = [music1, music2];
         var queue = [];
         var apiKey = 'AIzaSyBEQB2Qz1A-3KoDtgSIaDMY8ozhVXUSGYo';
         let searchResults;
@@ -83,7 +84,9 @@
                 playerVars: {
                 'playsinline': 1
                 },
-                events: {}
+                events: {
+                    'onStateChange': onStateChange1
+                }
             });
 
             music2 = new YT.Player('music2', {
@@ -93,8 +96,39 @@
                 playerVars: {
                 'playsinline': 1
                 },
-                events: {}
+                events: {
+                    'onStateChange': onStateChange2
+                }
             });
+        }
+
+        function onStateChange1(code)
+        {
+            onStateChange(code, 1);
+        }
+
+        function onStateChange2(code)
+        {
+            onStateChange(code, 2);
+        }
+
+        function onStateChange(code, param)
+        {
+            if (code.data == 0) // ended
+            {
+                playNextInQueue(param);
+                console.log("! " + code.data);
+            }
+        }
+
+        function playNextInQueue(param)
+        {
+            let q = document.getElementById('queue');
+            let nextInLineId = q.children[0].id;
+            console.log(nextInLineId);
+            loadVid(param, nextInLineId);
+            // remove from q
+            q.removeChild(q.children[0]);
         }
 
         function drag(ev) {
