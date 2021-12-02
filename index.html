@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <title>Nimi's Player</title>
     </head>
     <body id="body">
         <center>
@@ -11,26 +11,33 @@
             <div id="music2" style="float: right;"></div><br>
         </div>
         <div style="width: 100%; overflow: hidden;">
-            <div id="sOption" style="float: left;">
+            <div class="slot" id="sOption1" style="float: left;">
                 <center>
-                <span>song 1: </span>
-                <input type="search" id="sb" placeholder="YT vid id" /><button onclick="loadVid(1)">load music</button><br>
+                <!--span>song 1: </span>
+                <input type="search" id="sb" placeholder="YT vid id" /><button onclick="loadVid(1)">load music</button><br-->
                 <h3>Volume</h3>
                 <input type="range" min="0" max="100" value="100" class="slider" id="slider1" onmousemove="setVol()">
+                <div id="drop1" class="dropZone" ondrop="drop(event, 1)" ondragover="allowDrop(event)">drop song here</div>
                 </center>
             </div>
-            <div id="sOption2" style="float: right;">
+            <div class="slot" id="sOption2" style="float: right;">
                 <center>
-                <span>song 2: </span>
-                <input type="search" id="sb2" placeholder="YT vid id" /><button onclick="loadVid(2)">load music</button><br>
+                <!--span>song 2: </span>
+                <input type="search" id="sb2" placeholder="YT vid id" /><button onclick="loadVid(2)">load music</button><br-->
                 <h3>Volume</h3>
                 <input type="range" min="0" max="100" value="100" class="slider" id="slider2" onmousemove="setVol()">
+                <div id="drop2" class="dropZone" ondrop="drop(event, 2)" ondragover="allowDrop(event)">drop song here</div>
                 </center>
             </div>
         </div>
         <div id="sOptionMain">
             <h3>Master Fade</h3>
             <input type="range" min="0" max="100" value="50" class="slider" id="slider3" onmousemove="setVol()">
+            <h3>Queue</h3>
+            <input type="search" id="qInput" placeholder="Search Song" /><button onclick="addToQueueBtn()">add to queue</button><br><br>
+            <div id="queue">
+
+            </div>
         </div>
         </center>
     </body>
@@ -38,10 +45,39 @@
     <script>
         var music1;
         var music2;
+        var queue = [];
+        var apiKey = 'AIzaSyBEQB2Qz1A-3KoDtgSIaDMY8ozhVXUSGYo';
+        let searchResults;
+
+        function searchByKeyword(kw) {
+
+            fetch('https://youtube.googleapis.com/youtube/v3/search?q=' + kw + '&key=' + apiKey)
+            .then(res =>{
+                return res.json();
+            })
+            .then(data => {
+                searchResults = data['items'];
+                console.log(searchResults);
+                return searchResults;
+            })
+            .then(res => {
+                let id = res[0]['id']['videoId'];
+                console.log(id);
+                fetch('https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=' + id + '&key=' + apiKey)
+                .then(res => {
+                    return res.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    let title = data['items'][0]['snippet']['title'];
+                    addToQueue(searchResults[0]['id']['videoId'], title);
+                })
+            })
+        }
 
         window.onload = function() {
             music1 = new YT.Player('music1', {
-                height: '390',
+                height: '200',
                 width: window.innerWidth / 2 - 50,
                 videoId: '83xBPCw5hh4',
                 playerVars: {
@@ -51,7 +87,7 @@
             });
 
             music2 = new YT.Player('music2', {
-                height: '390',
+                height: '200',
                 width: window.innerWidth / 2 - 50,
                 videoId: 'WILNIXZr2oc',
                 playerVars: {
@@ -59,6 +95,59 @@
                 },
                 events: {}
             });
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("vidId", ev.target.id);
+        }
+
+        function drop(ev, param) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("vidId");
+            ev.target.innerHTML = "";
+            ev.target.appendChild(document.getElementById(data));
+
+            //queue.splice(queue.indexOf(data), 1);
+            loadVid(param, data);
+            //updateQueueDiv();
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function addToQueueBtn()
+        {
+            let id = document.getElementById('qInput').value;
+            document.getElementById('qInput').value = '';
+
+            //addToQueue(id, 'song');
+            searchByKeyword(id);
+        }
+
+        function addToQueue(id, label)
+        {
+            let div = document.getElementById('queue');
+
+            //div.innerHTML = '';
+            div.innerHTML += '<div class="queuedSong" id="' + id + '" draggable="true" ondragstart="drag(event)"><span>' + label + '</span></div>'
+            /*
+            queue.push({'id': id, 'label': label});
+
+            updateQueueDiv();
+            */
+        }
+
+        function updateQueueDiv()
+        {
+            let div = document.getElementById('queue');
+
+            div.innerHTML = '';
+
+            for (let i = 0; i < queue.length; i++)
+            {
+                div.innerHTML += '<div class="queuedSong" id="' + queue[i].id + '" draggable="true" ondragstart="drag(event)"><span>' + queue[i].label + '</span></div>'
+            }
         }
 
         function setVol()
@@ -71,21 +160,18 @@
         }
         
 
-        function loadVid(param)
+        function loadVid(param, id)
         {
+            let val = id;
             if (param == 1)
             {
-                let val = document.getElementById('sb').value;
-
                 music1.loadVideoById(val);
-                music1.pauseVideo();
+                //music1.pauseVideo();
             }
             else
             {
-                let val = document.getElementById('sb2').value;
-
                 music2.loadVideoById(val);
-                music2.pauseVideo();
+                //music2.pauseVideo();
             }
         }
 
@@ -98,6 +184,69 @@
 
         body {
             background-color: Beige;
+        }
+
+        .queuedSong {
+            height: 50px;
+            background-color: white;
+            width: fit-content;
+            margin: 10px;
+            border-style: none;
+            border-radius: 10px;
+        }
+
+        #queue {
+            background-color: lightblue;
+            padding: 10px;
+            width: 50%;
+            border-style: none;
+            border-radius: 20px;
+        }
+
+        .dropZone {
+            
+            width: 300px;
+            height: fit-content;
+            
+            padding: 10px;
+            background-color: lightblue;
+            border-style: none;
+            border-radius: 20px;
+        }
+
+        #qInput {
+            padding: 10px;
+            border-style: none;
+            border-radius: 20px;
+            font-size: large;
+        }
+
+        button {
+            padding: 10px;
+            border-style: none;
+            border-radius: 20px;
+            font-size: large;
+            background-color: lightcoral;
+        }
+
+        button:hover {
+            background-color: white;
+        }
+
+        #sOptionMain {
+            background-color: rosybrown;
+            padding: 10px;
+            width: 50%;
+            border-style: none;
+            border-radius: 20px;
+        }
+
+        .slot {
+            background-color:silver;
+            padding: 10px;
+            width: fit-content;
+            border-style: none;
+            border-radius: 20px;
         }
 
     </style>
