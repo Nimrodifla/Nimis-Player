@@ -62,6 +62,10 @@
             .then(data => {
                 console.log(data);
                 searchResults = data['items'];
+                if (searchResults == undefined)
+                {
+                    alert("Sorry, search isn't an option at the moment...\nTry copy & pasting a full youtube video link in the search bar :)");
+                }
                 return searchResults;
             })
             .then(res => {
@@ -171,8 +175,16 @@
             let id = document.getElementById('qInput').value;
             document.getElementById('qInput').value = '';
 
-            //addToQueue(id, 'song');
-            searchByKeyword(id);
+            if (String(id).includes('youtube.com')) // its a link
+            {
+                // extract vid id
+                id = id.substring(id.indexOf("?v=") + 3);
+                addToQueue(id, id);
+            }
+            else
+            {
+                searchByKeyword(id);
+            }
         }
 
         function addToQueue(id, label)
