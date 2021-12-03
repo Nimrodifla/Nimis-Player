@@ -35,11 +35,10 @@
         </div>
         <div id="sOptionMain">
             <h3>Master Fade</h3>
-            <input type="range" min="0" max="100" value="50" class="slider" id="slider3" onmousemove="setVol()">
+            🎵 <input type="range" min="0" max="100" value="50" class="slider" id="slider3" onmousemove="setVol()"> 🎵
             <h3>Queue</h3>
             <input type="search" id="qInput" placeholder="Search Song" /><button onclick="addToQueueBtn()">Add to queue</button><br><br>
             <div id="queue">
-                queue is empty at the moment :)
             </div>
         </div>
         </center>
@@ -52,6 +51,16 @@
         var queue = [];
         var apiKey = 'AIzaSyBEQB2Qz1A-3KoDtgSIaDMY8ozhVXUSGYo';
         let searchResults;
+        const QUEUE_EMPTY_LABEL = 'queue is empty at the moment :)';
+        const API_FAIL_MSG = "Sorry, search isn't an option at the moment...\nTry copy & pasting a full youtube video link in the search bar :)";
+
+        document.getElementById('queue').innerHTML = QUEUE_EMPTY_LABEL;
+
+        document.getElementById("qInput").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                addToQueueBtn();
+            }
+        });
 
         function searchByKeyword(kw) {
 
@@ -64,7 +73,7 @@
                 searchResults = data['items'];
                 if (searchResults == undefined)
                 {
-                    alert("Sorry, search isn't an option at the moment...\nTry copy & pasting a full youtube video link in the search bar :)");
+                    alert(API_FAIL_MSG);
                 }
                 return searchResults;
             })
@@ -75,6 +84,10 @@
                     return res.json();
                 })
                 .then(data => {
+                    if (data['items'][0] == undefined)
+                    {
+                        alert(API_FAIL_MSG);
+                    }
                     let title = data['items'][0]['snippet']['title'];
                     addToQueue(searchResults[0]['id']['videoId'], title);
                 })
@@ -126,6 +139,15 @@
             }
         }
 
+        function isQueueEmpty()
+        {
+            let q = document.getElementById('queue');
+            if (q.children.length == 0)
+            {
+                q.innerHTML = QUEUE_EMPTY_LABEL
+            }
+        }
+
         function playNextInQueue(param)
         {
             let q = document.getElementById('queue');
@@ -144,6 +166,9 @@
             }
             dropzone.innerHTML = '';
             dropzone.appendChild(q.children[0]);
+
+            // check if q is empty
+            isQueueEmpty();
         }
 
         function help()
@@ -161,9 +186,9 @@
             ev.target.innerHTML = "";
             ev.target.appendChild(document.getElementById(data));
 
-            //queue.splice(queue.indexOf(data), 1);
             loadVid(param, data);
-            //updateQueueDiv();
+            
+            isQueueEmpty();
         }
 
         function allowDrop(ev) {
@@ -323,10 +348,6 @@
         #topBar {
             background-color: cadetblue;
             padding: 10px;
-        }
-
-        h3 {
-            font-;
         }
 
     </style>
