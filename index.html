@@ -7,7 +7,7 @@
         <center>
         <div id="topBar">
             <h1>🎵 Nimi's Player - Beta</h1>
-            <button onclick="help()">how to?</button>
+            <button onclick="help()">❓ how to</button>
         </div><br>
         <div style="width: 100%; overflow: hidden;">
             <div id="music1" style="float: left;"></div>
@@ -18,28 +18,30 @@
                 <center>
                 <!--span>song 1: </span>
                 <input type="search" id="sb" placeholder="YT vid id" /><button onclick="loadVid(1)">load music</button><br-->
-                <h3>Volume</h3>
+                <h3>〰️ Volume</h3>
                 0<input type="range" min="0" max="100" value="100" class="slider" id="slider1" onmousemove="setVol()">100<br><br>
-                <div id="drop1" class="dropZone" ondrop="drop(event, 1)" ondragover="allowDrop(event)">drop song here</div>
+                <div id="drop1" class="dropZone" ondrop="drop(event, 1)" ondragover="allowDrop(event)">⬇️ drop song here ⬇️</div>
                 </center>
             </div>
             <div class="slot" id="sOption2" style="float: right;">
                 <center>
                 <!--span>song 2: </span>
                 <input type="search" id="sb2" placeholder="YT vid id" /><button onclick="loadVid(2)">load music</button><br-->
-                <h3>Volume</h3>
+                <h3>〰️ Volume</h3>
                 0<input type="range" min="0" max="100" value="100" class="slider" id="slider2" onmousemove="setVol()">100<br><br>
-                <div id="drop2" class="dropZone" ondrop="drop(event, 2)" ondragover="allowDrop(event)">drop song here</div>
+                <div id="drop2" class="dropZone" ondrop="drop(event, 2)" ondragover="allowDrop(event)">⬇️ drop song here ⬇️</div>
                 </center>
             </div>
         </div>
         <div id="sOptionMain">
-            <h3>Master Fade</h3>
+            <h3>〰️ Master Fade</h3>
             🎵 <input type="range" min="0" max="100" value="50" class="slider" id="slider3" onmousemove="setVol()"> 🎵
-            <h3>Queue</h3>
-            <input type="search" id="qInput" placeholder="Search Song" /><button onclick="addToQueueBtn()">Add to queue</button><br><br>
+            <h3>〰️ Queue</h3>
+            <input type="search" id="qInput" placeholder="Search Song 🔍" /><button onclick="addToQueueBtn()">Add to queue</button><br><br>
             <div id="queue">
             </div>
+        </div><br>
+        <div id="trashDrop" ondragover="allowDrop(event)" ondrop="drop(event, 3)">
         </div>
         </center>
     </body>
@@ -51,10 +53,12 @@
         var queue = [];
         var apiKey = 'AIzaSyBEQB2Qz1A-3KoDtgSIaDMY8ozhVXUSGYo';
         let searchResults;
-        const QUEUE_EMPTY_LABEL = 'queue is empty at the moment :)';
-        const API_FAIL_MSG = "Sorry, search isn't an option at the moment...\nTry copy & pasting a full youtube video link in the search bar :)";
+        const QUEUE_EMPTY_LABEL = '✨ queue is empty at the moment :)';
+        const API_FAIL_MSG = "⚠️ Sorry, search isn't an option at the moment...\nTry copy & pasting a full youtube video link in the search bar :)";
+        const TRASH_DROP_LABEL = "🗑️ drop here to delete song from queue";
 
         document.getElementById('queue').innerHTML = QUEUE_EMPTY_LABEL;
+        document.getElementById('trashDrop').innerHTML = TRASH_DROP_LABEL;
 
         document.getElementById("qInput").addEventListener("keydown", function(event) {
             if (event.key === "Enter") {
@@ -69,7 +73,7 @@
                 return res.json();
             })
             .then(data => {
-                console.log(data);
+                //console.log(data);
                 searchResults = data['items'];
                 if (searchResults == undefined)
                 {
@@ -139,12 +143,18 @@
             }
         }
 
+        function getQueueCount()
+        {
+            let q = document.getElementById('queue');
+            return q.children.length;
+        }
+
         function isQueueEmpty()
         {
             let q = document.getElementById('queue');
-            if (q.children.length == 0)
+            if (getQueueCount() == 0)
             {
-                q.innerHTML = QUEUE_EMPTY_LABEL
+                q.innerHTML = QUEUE_EMPTY_LABEL;
             }
         }
 
@@ -186,13 +196,23 @@
             ev.target.innerHTML = "";
             ev.target.appendChild(document.getElementById(data));
 
-            loadVid(param, data);
-            
+            if (param != 3)
+            {
+                loadVid(param, data);
+            }
+
+            clearTrash();
             isQueueEmpty();
         }
 
         function allowDrop(ev) {
             ev.preventDefault();
+        }
+
+        function clearTrash()
+        {
+            let trash = document.getElementById('trashDrop');
+            trash.innerHTML = TRASH_DROP_LABEL;
         }
 
         function addToQueueBtn()
@@ -216,7 +236,11 @@
         {
             let div = document.getElementById('queue');
 
-            //div.innerHTML = '';
+            if (getQueueCount() == 0)
+            {
+                div.innerHTML = '';
+            }
+
             div.innerHTML += '<div class="queuedSong" id="' + id + '" draggable="true" ondragstart="drag(event)"><span>' + label + '</span></div>'
             /*
             queue.push({'id': id, 'label': label});
@@ -225,6 +249,7 @@
             */
         }
 
+        /*
         function updateQueueDiv()
         {
             let div = document.getElementById('queue');
@@ -236,6 +261,7 @@
                 div.innerHTML += '<div class="queuedSong" id="' + queue[i].id + '" draggable="true" ondragstart="drag(event)"><span>' + queue[i].label + '</span></div>'
             }
         }
+        */
 
         function setVol()
         {
@@ -280,12 +306,13 @@
         body {
             background-color: Beige;
             margin: 0px;
+            margin-bottom: 200px;
         }
 
         .queuedSong {
-            height: 50px;
+            min-height: 50px;
             background-color: white;
-            width: fit-content;
+            width: 80%;
             margin: 10px;
             border-style: none;
             border-radius: 10px;
@@ -294,7 +321,7 @@
         #queue {
             background-color: lightblue;
             padding: 10px;
-            width: 50%;
+            width: 60%;
             border-style: none;
             border-radius: 20px;
         }
@@ -302,8 +329,8 @@
         .dropZone {
             
             width: 300px;
+            min-height: 50px;
             height: fit-content;
-            
             padding: 10px;
             background-color: lightblue;
             border-style: none;
@@ -348,6 +375,15 @@
         #topBar {
             background-color: cadetblue;
             padding: 10px;
+        }
+
+        #trashDrop {
+            background-color: cadetblue;
+            padding: 10px;
+            width: 50%;
+            border-style: none;
+            border-radius: 20px;
+            min-height: 50px;
         }
 
     </style>
