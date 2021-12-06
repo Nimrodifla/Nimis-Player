@@ -12,7 +12,7 @@
         <div style="width: 100%; overflow: hidden;">
             <div id="music1" style="float: left;"></div>
             <div id="music2" style="float: right;"></div><br>
-        </div>
+        </div><br>
         <div style="width: 100%; overflow: hidden;">
             <div class="slot" id="sOption1" style="float: left;">
                 <center>
@@ -32,17 +32,16 @@
                 <div id="drop2" class="dropZone" ondrop="drop(event, 2)" ondragover="allowDrop(event)">⬇️ drop song here ⬇️</div>
                 </center>
             </div>
+            <div id="sOptionMain">
+                <h3>〰️ Master Fade</h3>
+                🎵 <input type="range" min="0" max="100" value="50" class="slider" id="slider3" onmousemove="setVol()"> 🎵
+                <h3>〰️ Queue</h3>
+                <input type="search" id="qInput" placeholder="Search Song 🔍" /><button onclick="addToQueueBtn()">Add to queue</button><br><br>
+                <div id="queue"></div><br>
+                <div id="trashDrop" ondragover="allowDrop(event)" ondrop="drop(event, 3)"></div>
+            </div><br>
         </div>
-        <div id="sOptionMain">
-            <h3>〰️ Master Fade</h3>
-            🎵 <input type="range" min="0" max="100" value="50" class="slider" id="slider3" onmousemove="setVol()"> 🎵
-            <h3>〰️ Queue</h3>
-            <input type="search" id="qInput" placeholder="Search Song 🔍" /><button onclick="addToQueueBtn()">Add to queue</button><br><br>
-            <div id="queue">
-            </div>
-        </div><br>
-        <div id="trashDrop" ondragover="allowDrop(event)" ondrop="drop(event, 3)">
-        </div>
+        
         </center>
     </body>
     <script src="https://www.youtube.com/iframe_api"></script>
@@ -57,14 +56,40 @@
         const API_FAIL_MSG = "⚠️ Sorry, search isn't an option at the moment...\nTry copy & pasting a full youtube video link in the search bar :)";
         const TRASH_DROP_LABEL = "🗑️ drop here to delete song from queue";
 
-        document.getElementById('queue').innerHTML = QUEUE_EMPTY_LABEL;
-        document.getElementById('trashDrop').innerHTML = TRASH_DROP_LABEL;
+        window.onload = function() {
+            document.getElementById('queue').innerHTML = QUEUE_EMPTY_LABEL;
+            document.getElementById('trashDrop').innerHTML = TRASH_DROP_LABEL;
 
-        document.getElementById("qInput").addEventListener("keydown", function(event) {
-            if (event.key === "Enter") {
-                addToQueueBtn();
-            }
-        });
+            document.getElementById("qInput").addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    addToQueueBtn();
+                }
+            });
+            
+            music1 = new YT.Player('music1', {
+                height: '200',
+                width: window.innerWidth / 2 - 50,
+                videoId: '83xBPCw5hh4',
+                playerVars: {
+                'playsinline': 1
+                },
+                events: {
+                    'onStateChange': onStateChange1
+                }
+            });
+
+            music2 = new YT.Player('music2', {
+                height: '200',
+                width: window.innerWidth / 2 - 50,
+                videoId: 'WILNIXZr2oc',
+                playerVars: {
+                'playsinline': 1
+                },
+                events: {
+                    'onStateChange': onStateChange2
+                }
+            });
+        }
 
         function searchByKeyword(kw) {
 
@@ -98,32 +123,6 @@
             })
         }
 
-        window.onload = function() {
-            music1 = new YT.Player('music1', {
-                height: '200',
-                width: window.innerWidth / 2 - 50,
-                videoId: '83xBPCw5hh4',
-                playerVars: {
-                'playsinline': 1
-                },
-                events: {
-                    'onStateChange': onStateChange1
-                }
-            });
-
-            music2 = new YT.Player('music2', {
-                height: '200',
-                width: window.innerWidth / 2 - 50,
-                videoId: 'WILNIXZr2oc',
-                playerVars: {
-                'playsinline': 1
-                },
-                events: {
-                    'onStateChange': onStateChange2
-                }
-            });
-        }
-
         function onStateChange1(code)
         {
             onStateChange(code, 1);
@@ -136,6 +135,7 @@
 
         function onStateChange(code, param)
         {
+            setVol();
             if (code.data == 0) // ended
             {
                 playNextInQueue(param);
@@ -242,26 +242,7 @@
             }
 
             div.innerHTML += '<div class="queuedSong" id="' + id + '" draggable="true" ondragstart="drag(event)"><span>' + label + '</span></div>'
-            /*
-            queue.push({'id': id, 'label': label});
-
-            updateQueueDiv();
-            */
         }
-
-        /*
-        function updateQueueDiv()
-        {
-            let div = document.getElementById('queue');
-
-            div.innerHTML = '';
-
-            for (let i = 0; i < queue.length; i++)
-            {
-                div.innerHTML += '<div class="queuedSong" id="' + queue[i].id + '" draggable="true" ondragstart="drag(event)"><span>' + queue[i].label + '</span></div>'
-            }
-        }
-        */
 
         function setVol()
         {
@@ -380,7 +361,7 @@
         #trashDrop {
             background-color: cadetblue;
             padding: 10px;
-            width: 50%;
+            width: 60%;
             border-style: none;
             border-radius: 20px;
             min-height: 50px;
