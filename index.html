@@ -5,6 +5,10 @@
     </head>
     <body id="body">
         <center>
+        <div id="loading">
+            <h1>LOADING...</h1>
+        </div>
+        <div id="page" style="visibility: hidden;">
         <div id="topBar">
             <h1>🎵 Nimi's Player - Beta</h1>
             <button onclick="help()">❓ how to</button>
@@ -16,8 +20,7 @@
         <div style="width: 100%; overflow: hidden;">
             <div class="slot" id="sOption1" style="float: left;">
                 <center>
-                <!--span>song 1: </span>
-                <input type="search" id="sb" placeholder="YT vid id" /><button onclick="loadVid(1)">load music</button><br-->
+                    <button class="conBtn" onclick="jumpToStartBtn(1)">⏮️</button><button class="conBtn" onclick="playPauseBtn(1)">⏯️</button><button class="conBtn" onclick="nextBtn(1)">⏭️</button>
                 <h3>〰️ Volume</h3>
                 0<input type="range" min="0" max="100" value="100" class="slider" id="slider1" onmousemove="setVol()">100<br><br>
                 <div id="drop1" class="dropZone" ondrop="drop(event, 1)" ondragover="allowDrop(event)">⬇️ drop song here ⬇️</div>
@@ -25,8 +28,7 @@
             </div>
             <div class="slot" id="sOption2" style="float: right;">
                 <center>
-                <!--span>song 2: </span>
-                <input type="search" id="sb2" placeholder="YT vid id" /><button onclick="loadVid(2)">load music</button><br-->
+                <button class="conBtn" onclick="jumpToStartBtn(2)">⏮️</button><button class="conBtn" onclick="playPauseBtn(2)">⏯️</button><button class="conBtn" onclick="nextBtn(2)">⏭️</button>
                 <h3>〰️ Volume</h3>
                 0<input type="range" min="0" max="100" value="100" class="slider" id="slider2" onmousemove="setVol()">100<br><br>
                 <div id="drop2" class="dropZone" ondrop="drop(event, 2)" ondragover="allowDrop(event)">⬇️ drop song here ⬇️</div>
@@ -41,14 +43,14 @@
                 <div id="trashDrop" ondragover="allowDrop(event)" ondrop="drop(event, 3)"></div>
             </div><br>
         </div>
-        
+        </div>
         </center>
     </body>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         var music1;
         var music2;
-        var players = [music1, music2];
+        var players;
         var queue = [];
         var apiKey = 'AIzaSyBEQB2Qz1A-3KoDtgSIaDMY8ozhVXUSGYo';
         let searchResults;
@@ -59,6 +61,7 @@
         window.onload = function() {
             document.getElementById('queue').innerHTML = QUEUE_EMPTY_LABEL;
             document.getElementById('trashDrop').innerHTML = TRASH_DROP_LABEL;
+            
 
             document.getElementById("qInput").addEventListener("keydown", function(event) {
                 if (event.key === "Enter") {
@@ -89,6 +92,37 @@
                     'onStateChange': onStateChange2
                 }
             });
+
+            players = [music1, music2];
+
+            let page = document.getElementById("page");
+            page.style.visibility = "visible";
+            let load = document.getElementById("loading");
+            load.style.visibility = "hidden";
+
+        }
+
+        function playPauseBtn(param)
+        {   
+            let state = players[param - 1].getPlayerState();
+            if (state == 1) // playing
+            {
+                players[param - 1].pauseVideo();
+            }
+            else if (state == 2) // paused
+            {
+                players[param - 1].playVideo();
+            }
+        }
+
+        function nextBtn(param)
+        {
+            playNextInQueue(param);
+        }
+
+        function jumpToStartBtn(param)
+        {
+            players[param - 1].seekTo(0, true);
         }
 
         function searchByKeyword(kw) {
@@ -287,7 +321,7 @@
         body {
             background-color: Beige;
             margin: 0px;
-            margin-bottom: 200px;
+            /*margin-bottom: 200px;*/
         }
 
         .queuedSong {
@@ -365,6 +399,13 @@
             border-style: none;
             border-radius: 20px;
             min-height: 50px;
+        }
+
+        .conBtn {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin: 15px 5px 0px 5px;
         }
 
     </style>
